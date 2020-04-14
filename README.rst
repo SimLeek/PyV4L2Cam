@@ -1,7 +1,7 @@
 *********
 PyV4L2Cam
 *********
-A high FPS linux webcam library for python. Based off of https://gitlab.com/radish/PyV4L2Camer
+A high FPS linux webcam library for python. Based off of https://gitlab.com/radish/PyV4L2Camera
 
 ============
 Installation
