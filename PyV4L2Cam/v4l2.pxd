@@ -138,6 +138,7 @@ cdef extern from 'linux/videodev2.h':
         __s32 value
 
 cdef extern from 'libv4l2.h':
+    enum: V4L2_PIX_FMT_MJPEG
     enum: V4L2_PIX_FMT_RGB24
     enum: V4L2_BUF_TYPE_VIDEO_CAPTURE
     enum: V4L2_MEMORY_MMAP

@@ -6,8 +6,8 @@ from posix.select cimport fd_set, timeval, FD_ZERO, FD_SET, select
 from posix.fcntl cimport O_RDWR
 from posix.mman cimport PROT_READ, PROT_WRITE, MAP_SHARED
 
-from PyV4L2Camera.controls import CameraControl
-from PyV4L2Camera.exceptions import CameraError
+from PyV4L2Cam.controls import CameraControl
+from PyV4L2Cam.exceptions import CameraError
 
 cdef class Camera:
     cdef int fd
@@ -18,6 +18,7 @@ cdef class Camera:
 
     cdef public unsigned int width
     cdef public unsigned int height
+    cdef public str pixel_format
 
     cdef unsigned int conv_dest_size
     cdef unsigned char *conv_dest
@@ -46,10 +47,14 @@ cdef class Camera:
         if width and height:
             self.fmt.fmt.pix.width = width
             self.fmt.fmt.pix.height = height
-        self.fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24
+        self.fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_MJPEG
+        self.pixel_format = "MJPEG"
 
         if -1 == xioctl(self.fd, VIDIOC_S_FMT, &self.fmt):
-            raise CameraError('Setting format failed')
+            self.fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24
+            self.pixel_format = "RGB24"
+            if -1 == xioctl(self.fd, VIDIOC_S_FMT, &self.fmt):
+                raise CameraError('Setting format failed')
 
         self.width = self.fmt.fmt.pix.width
         self.height = self.fmt.fmt.pix.height
@@ -57,7 +62,7 @@ cdef class Camera:
         self.dest_fmt.type = self.fmt.type
         self.dest_fmt.fmt.pix.width = self.fmt.fmt.pix.width
         self.dest_fmt.fmt.pix.height = self.fmt.fmt.pix.height
-        self.dest_fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24
+        self.dest_fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_MJPEG
 
         self.conv_dest_size = self.width * self.height * 3
         self.conv_dest = <unsigned char *>malloc(self.conv_dest_size)

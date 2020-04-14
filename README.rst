@@ -1,7 +1,7 @@
-************
-PyV4L2Camera
-************
-A simple, libv4l2-based frames capture library.
+*********
+PyV4L2Cam
+*********
+A high FPS linux webcam library for python. Based off of https://gitlab.com/radish/PyV4L2Camer
 
 ============
 Installation
@@ -11,62 +11,46 @@ Libv4l2
 +++++++
 Libv4l2 is packaged by various distributions:
 
------------------
-Debian and Ubuntu
------------------
 .. code-block:: bash
 
-    # apt-get install libv4l-dev
+    # Debian and Ubuntu:
+    $ apt-get install libv4l-dev
 
-------
-Fedora
-------
-.. code-block:: bash
+    # Fedora
+    $ dnf install libv4l-devel
 
-    # dnf install libv4l-devel
-
-----------
-Arch Linux
-----------
-.. code-block:: bash
-
-    # pacman -S v4l-utils
+    # Arch Linux
+    $ pacman -S v4l-utils
 
 ++++++
 PyV4L2
 ++++++
-To install PyV4L2Camera make sure you have Cython installed and type:
+To install PyV4L2Cam make sure you have Cython installed and type:
 
 .. code-block:: bash
 
-    $ pip install PyV4L2Camera
+    $ pip install git+https://github.com/simleek/PyV4L2Cam.git@
 
-PyV4L2Camera is only compatible with Python 3.
+PyV4L2Cam is only compatible with Python 3.
 
 =====
 Usage
 =====
 .. code-block:: python
 
-    from PyV4L2Camera.camera import Camera
+    from PyV4L2Cam.camera import Camera
 
     camera = Camera('/dev/video0')
     frame = camera.get_frame()
 
-The returned frame is of bytes type and contains pixels packed using RGB24
-format. To learn more see `V4L2_PIX_FMT_RGB24 description
-<https://linuxtv.org/downloads/v4l-dvb-apis/packed-rgb.html>`_.
-
-Example of frames to numpy arrays conversion can be found in the examples
-directory.
-
-=============
-Contributions
-=============
-Contributions are always welcome!
+The returned frame is a bytes object in MJPEG formet. It may fall back to RGB24.
+You can use opencv's imdecode to convert these to numpy arrays. This is don in
+the examples directory.
 
 =======
 Authors
 =======
+`SimLeek <https://github.com/simleek>`_
+Other PyV4l developers that I've found:
 `Dominik Pieczyński <https://gitlab.com/u/rivi>`_ and `contributors
 <https://gitlab.com/radish/PyV4L2Camera/graphs/master/contributors>`_.
