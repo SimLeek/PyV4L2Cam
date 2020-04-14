@@ -44,7 +44,7 @@ Usage
     frame = camera.get_frame()
 
 The returned frame is a bytes object in MJPEG formet. It may fall back to RGB24.
-You can use opencv's imdecode to convert these to numpy arrays. This is don in
+You can use opencv's imdecode to convert these to numpy arrays. This is done in
 the examples directory.
 
 =======
