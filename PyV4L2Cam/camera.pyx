@@ -31,7 +31,7 @@ cdef class Camera:
     cdef v4lconvert_data *convert_data
 
     def __cinit__(self, device_path,
-                  unsigned int width=0, unsigned int height=0):
+                  long int width=0, long int height=0):
         device_path = device_path.encode()
 
         self.fd = v4l2_open(device_path, O_RDWR)
