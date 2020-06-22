@@ -7,8 +7,10 @@ sys.path = reversed(sys.path)  # search global packages first. python can't impo
 
 from PyV4L2Cam.camera import Camera
 from PyV4L2Cam.controls import ControlIDs
+from PyV4L2Cam.get_camera import get_camera_by_bus_info, get_bus_info_from_camera
 
-cams = []
+cammy = get_camera_by_bus_info('usb-0000:00:14.0-7')
+print(get_bus_info_from_camera(cammy))
 
 for i in range(100):
     try:
