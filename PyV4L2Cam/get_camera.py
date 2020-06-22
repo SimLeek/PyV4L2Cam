@@ -23,3 +23,10 @@ def get_camera_by_bus_info(bus_info, width=1, height=1, partial_match=True):
 
 def get_bus_info_from_camera(cam):
     return cam.input_capabilities['bus_info']
+
+
+def get_camera_by_string(cam_str: str, width=1, height=1, ):
+    if cam_str.isdigit() or isinstance(cam_str, int):
+        return Camera(f'/dev/video{cam_str}', width, height)
+    else:
+        return Camera(cam_str, width, height)
