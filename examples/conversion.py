@@ -2,13 +2,27 @@ import numpy as np
 import cv2
 import sys
 import time
-
+import typing
 sys.path = reversed(sys.path)  # search global packages first. python can't import local cython without building.
 
 from PyV4L2Cam.camera import Camera
 from PyV4L2Cam.controls import ControlIDs
 
-camera = Camera('/dev/video0', 99999, 99999)
+cams = []
+
+for i in range(100):
+    try:
+        cam = Camera(f'/dev/video{i}', 1, 1)
+        print(f"/dev/video{i}")
+        print("-----------------")
+        for a,b in cam.input_capabilities.items():
+            print(f'{a}:{b}')
+        print("----------------")
+        cams.append(cam)
+    except Exception as e:
+        pass
+camera = cams[0]
+
 controls = camera.get_controls()
 
 for control in controls:
@@ -26,10 +40,10 @@ for _ in range(100000000):
     if a != -1 and b != -1:
         jpg = frame_bytes[a:b + 2]
         bytes = frame_bytes[b + 2:]
-        i = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
+        i = cv2.imdecode(np.frombuffer(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
         cv2.imshow('i', i)
         t1 = time.time()
-        print(f'{(t1 - t0) * 1000}FPS')
+        print(f'{(1.0/(t1 - t0))}FPS')
         t0 = t1
         if cv2.waitKey(1) == 27:
             break

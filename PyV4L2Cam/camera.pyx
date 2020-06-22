@@ -1,3 +1,5 @@
+# cython: language_level=2
+
 from v4l2 cimport *
 from libc.errno cimport errno, EINTR, EINVAL
 from libc.string cimport memset, strerror
@@ -5,6 +7,7 @@ from libc.stdlib cimport malloc, calloc
 from posix.select cimport fd_set, timeval, FD_ZERO, FD_SET, select
 from posix.fcntl cimport O_RDWR
 from posix.mman cimport PROT_READ, PROT_WRITE, MAP_SHARED
+import warnings
 
 from PyV4L2Cam.controls import CameraControl
 from PyV4L2Cam.exceptions import CameraError
@@ -19,6 +22,8 @@ cdef class Camera:
     cdef public unsigned int width
     cdef public unsigned int height
     cdef public str pixel_format
+    cdef public v4l2_input input_info
+    cdef public v4l2_capability input_capabilities
 
     cdef unsigned int conv_dest_size
     cdef unsigned char *conv_dest
@@ -37,6 +42,17 @@ cdef class Camera:
         self.fd = v4l2_open(device_path, O_RDWR)
         if -1 == self.fd:
             raise CameraError('Error opening device {}'.format(device_path))
+
+        memset(&self.input_info, 0, sizeof(self.input_info))
+        self.input_info.index = 0
+
+        if -1 == xioctl(self.fd, VIDIOC_ENUMINPUT, &self.input_info):
+            warnings.warn('Getting camera info failed')
+
+        memset(&self.input_capabilities, 0, sizeof(self.input_capabilities))
+
+        if -1 == xioctl(self.fd, VIDIOC_QUERYCAP, &self.input_capabilities):
+            warnings.warn('Getting camera capabilities failed')
 
         memset(&self.fmt, 0, sizeof(self.fmt))
         self.fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE

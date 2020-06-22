@@ -27,7 +27,9 @@ cdef extern from 'linux/videodev2.h':
     enum: V4L2_CID_PRIVATE_BASE
     enum: V4L2_CTRL_FLAG_DISABLED
 
-    enum: V4L2_CTRL_FLAG_DISABLED
+    enum: VIDIOC_ENUMINPUT
+    enum: VIDIOC_QUERYCAP
+
     enum: V4L2_CTRL_FLAG_GRABBED
     enum: V4L2_CTRL_FLAG_READ_ONLY
     enum: V4L2_CTRL_FLAG_UPDATE
@@ -136,6 +138,26 @@ cdef extern from 'linux/videodev2.h':
     cdef struct v4l2_control:
         __u32 id
         __s32 value
+
+    cdef struct v4l2_input:
+        __u32 index
+        char name[32]
+        __u32 type
+        __u32 audioset
+        __u32 tuner
+        __u64 std
+        __u32 status
+        __u32 capabilities
+        __u32 reserved[3]
+
+    cdef struct v4l2_capability:
+        __u8	driver[16]
+        __u8	card[32]
+        __u8	bus_info[32]
+        __u32   version
+        __u32	capabilities
+        __u32	device_caps
+        __u32	reserved[3]
 
 cdef extern from 'libv4l2.h':
     enum: V4L2_PIX_FMT_MJPEG

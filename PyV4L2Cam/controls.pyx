@@ -1,3 +1,5 @@
+# cython: language_level=2
+
 from enum import Enum
 from typing import Any, List
 
