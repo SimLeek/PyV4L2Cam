@@ -15,6 +15,11 @@ def convert_mjpeg(mjpeg: bytes) -> Optional[np.ndarray]:
         frame = cv2.imdecode(np.frombuffer(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
         return frame
 
+def convert_vp8(vp8: bytes) -> Optional[np.ndarray]:
+    # Create a temporary buffer for VP9 decoding
+    nparr = np.frombuffer(vp8, np.uint8)
+    frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    return frame
 
 def convert_rgb24(rgb24: bytes, width: int, height: int) -> Optional[np.ndarray]:
     nparr = np.frombuffer(rgb24, np.uint8)

@@ -10,6 +10,10 @@ cdef extern from 'linux/videodev2.h':
     ctypedef unsigned long long int  __u64
     ctypedef signed long long int    __s64
     
+    # Pixel format macro
+    cdef __u32 v4l2_fourcc(__u8 a, __u8 b, __u8 c, __u8 d)
+
+    # V4L2 constants
     enum: VIDIOC_G_FMT
     enum: VIDIOC_S_FMT
     enum: VIDIOC_REQBUFS
@@ -26,16 +30,16 @@ cdef extern from 'linux/videodev2.h':
     enum: V4L2_CID_LASTP1
     enum: V4L2_CID_PRIVATE_BASE
     enum: V4L2_CTRL_FLAG_DISABLED
-
     enum: VIDIOC_ENUMINPUT
     enum: VIDIOC_QUERYCAP
+    enum: VIDIOC_ENUM_FMT
 
     enum: V4L2_CTRL_FLAG_GRABBED
     enum: V4L2_CTRL_FLAG_READ_ONLY
     enum: V4L2_CTRL_FLAG_UPDATE
     enum: V4L2_CTRL_FLAG_INACTIVE
     enum: V4L2_CTRL_FLAG_WRITE_ONLY
-    
+
     enum: V4L2_CID_BRIGHTNESS
     enum: V4L2_CID_CONTRAST
     enum: V4L2_CID_SATURATION
@@ -64,7 +68,7 @@ cdef extern from 'linux/videodev2.h':
     enum: V4L2_CID_SHARPNESS
     enum: V4L2_CID_BACKLIGHT_COMPENSATION
     enum: V4L2_CID_CHROMA_AGC
-    enum: V4L2_CID_COLOR_KILLER 
+    enum: V4L2_CID_COLOR_KILLER
     enum: V4L2_CID_COLORFX
 
     cdef struct v4l2_pix_format:
@@ -88,7 +92,14 @@ cdef extern from 'linux/videodev2.h':
     cdef struct v4l2_format:
         __u32 type
         __v4l2_format_fmt fmt
-            
+
+    cdef struct v4l2_fmtdesc:
+        __u32 index
+        __u32 type
+        __u32 flags
+        __u8  description[32]
+        __u32 pixelformat
+        __u32 reserved[4]
 
     cdef struct v4l2_requestbuffers:
         __u32 count
@@ -106,7 +117,6 @@ cdef extern from 'linux/videodev2.h':
         __u32 memory
         __u32 length
         __u32 bytesused
-
         __v4l2_buffer_m m
 
     cdef enum v4l2_ctrl_type:
@@ -162,6 +172,13 @@ cdef extern from 'linux/videodev2.h':
 cdef extern from 'libv4l2.h':
     enum: V4L2_PIX_FMT_MJPEG
     enum: V4L2_PIX_FMT_RGB24
+    enum: V4L2_PIX_FMT_YUYV
+    enum: V4L2_PIX_FMT_YVYU
+    enum: V4L2_PIX_FMT_UYVY
+    enum: V4L2_PIX_FMT_YUV420
+    enum: V4L2_PIX_FMT_BGR24
+    enum: V4L2_PIX_FMT_VP8
+    enum: V4L2_PIX_FMT_VP9
     enum: V4L2_BUF_TYPE_VIDEO_CAPTURE
     enum: V4L2_MEMORY_MMAP
 
@@ -178,12 +195,17 @@ cdef extern from 'libv4l2.h':
     int v4l2_munmap(void *_start, size_t length)
 
 cdef extern from 'libv4lconvert.h':
+    cdef struct v4lconvert_data:
+        pass
+
     v4lconvert_data *v4lconvert_create(int fd)
     int v4lconvert_convert(v4lconvert_data *data,
                            const v4l2_format *src_fmt,
                            const v4l2_format *dest_fmt,
                            unsigned char *src, int src_size,
                            unsigned char *dest, int dest_size)
+    void v4lconvert_destroy(v4lconvert_data *data)
+    int v4lconvert_supported_dst_format(unsigned int pixelformat)
 
 cdef inline int xioctl(int fd, unsigned long int request, void *arg):
     cdef int r = v4l2_ioctl(fd, request, arg)

@@ -12,12 +12,15 @@ extensions = [
     Extension(
         'PyV4L2Cam.camera',
         ['PyV4L2Cam/camera' + ext],
-        libraries=['v4l2', ]
+        libraries=['v4l2', ],
+        define_macros=[('CYTHON_COMPRESS_STRINGS', '0')],
+
     ),
     Extension(
         'PyV4L2Cam.controls',
         ['PyV4L2Cam/controls' + ext],
-        libraries=['v4l2', ]
+        libraries=['v4l2', ],
+        define_macros=[('CYTHON_COMPRESS_STRINGS', '0')],
     )
 ]
 

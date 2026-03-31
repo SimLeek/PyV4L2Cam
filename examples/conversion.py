@@ -3,18 +3,22 @@ import cv2
 import sys
 import time
 import typing
-sys.path = reversed(sys.path)  # search global packages first. python can't import local cython without building.
+#sys.path = reversed(sys.path)  # search global packages first. python can't import local cython without building.
 
 from PyV4L2Cam.camera import Camera
 from PyV4L2Cam.controls import ControlIDs
 from PyV4L2Cam.get_camera import get_camera_by_bus_info, get_bus_info_from_camera
 
-cammy = get_camera_by_bus_info('usb-0000:00:14.0-7')
-print(get_bus_info_from_camera(cammy))
+#cammy = get_camera_by_bus_info('usb-0000:00:14.0-7')
+#print(get_bus_info_from_camera(cammy))
 
+cams = []
 for i in range(100):
     try:
-        cam = Camera(f'/dev/video{i}', 1, 1)
+        cam = Camera(f'/dev/video{i}', 1, 1) # fails, keeps writing empty output.
+        #cam = Camera(f'/dev/video{i}', 1, 1, src_fmt="MJPG", dest_fmt="MJPG")  # same failure. Used to succeed.
+        #cam = Camera(f'/dev/video{i}', 1, 1, src_fmt="YUYV", dest_fmt="BGR3")
+        #cam = Camera(f'/dev/video{i}', 1, 1, src_fmt="BGR3", dest_fmt=None)
         print(f"/dev/video{i}")
         print("-----------------")
         for a,b in cam.input_capabilities.items():
